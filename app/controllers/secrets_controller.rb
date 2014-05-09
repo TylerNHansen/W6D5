@@ -9,6 +9,8 @@ class SecretsController < ApplicationController
 
     if @secret.save
       redirect_to user_url(@secret.recipient_id)
+    else
+      redirect_to user_url(@secret.recipient_id)
     end
   end
 

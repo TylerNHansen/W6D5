@@ -1,8 +1,44 @@
 <h1><%= @user.username %></h1>
 
 <h2>Secrets</h2>
-<ul>
+<div id="secrets">
   <% @user.received_secrets.each do |secret| %>
     <li><%= secret.title %></li>
   <% end %>
-</ul>
+</div>
+<%= render "secret_form", :user => @user %>
+
+<script>
+$( 'form' ).submit(function( event ) {
+  event.preventDefault();
+
+  var form = $(this);
+  $.ajax({
+    type: 'POST',
+    url: '<%= secret_url %>',
+    data: form.serialize(),
+    dataType: 'text',
+    success: function (){
+      loadSecrets();
+
+    }
+  })
+  console.log('hi')
+})
+
+function loadSecrets (){
+  $.ajax({
+    type: 'GET',
+    url: '<%= user_url(@user) %>.json',
+    dataType: 'json',
+    success: function (secrets){
+      var $div = $('#secrets');
+      $div.html('');
+      _(secrets).each(function (secret){
+        $div.append('<li>' + secret.title + '</li>');
+      });
+      $('#secretText').val('');
+    }
+  })
+}
+</script>

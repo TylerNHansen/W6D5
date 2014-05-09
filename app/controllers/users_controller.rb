@@ -23,13 +23,20 @@ class UsersController < ApplicationController
   end
 
   def show
+
+
     if !params.include?(:id)
       redirect_to user_url(current_user)
       return
     end
-
-
     @user = User.find(params[:id])
+
+    respond_to do |format|
+      format.html { render :show }
+      format.json {render json: @user.received_secrets}
+    end
+
+
   end
 
   private
