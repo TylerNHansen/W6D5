@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140509172225) do
+ActiveRecord::Schema.define(version: 20140509215443) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -26,6 +26,16 @@ ActiveRecord::Schema.define(version: 20140509172225) do
   add_index "friendships", ["friend_id"], name: "index_friendships_on_friend_id", using: :btree
   add_index "friendships", ["owner_id"], name: "index_friendships_on_owner_id", using: :btree
 
+  create_table "secret_tags", force: true do |t|
+    t.integer  "secret_id"
+    t.integer  "tag_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "secret_tags", ["secret_id"], name: "index_secret_tags_on_secret_id", using: :btree
+  add_index "secret_tags", ["tag_id"], name: "index_secret_tags_on_tag_id", using: :btree
+
   create_table "secrets", force: true do |t|
     t.string   "title",        null: false
     t.integer  "author_id",    null: false
@@ -36,6 +46,12 @@ ActiveRecord::Schema.define(version: 20140509172225) do
 
   add_index "secrets", ["author_id"], name: "index_secrets_on_author_id", using: :btree
   add_index "secrets", ["recipient_id"], name: "index_secrets_on_recipient_id", using: :btree
+
+  create_table "tags", force: true do |t|
+    t.string   "body"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "users", force: true do |t|
     t.string   "username",        null: false

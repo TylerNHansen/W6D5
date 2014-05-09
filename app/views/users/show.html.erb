@@ -3,10 +3,10 @@
 <h2>Secrets</h2>
 <div id="secrets">
   <% @user.received_secrets.each do |secret| %>
-    <li><%= secret.title %></li>
+    <li><%= secret.title %> <% secret.tags.each do |tag| %> #<%= tag %><% end %></li>
   <% end %>
 </div>
-<%= render "secret_form", :user => @user %>
+<%= render "secret_form", :user => @user, :tags => @tags %>
 
 <script>
 $( 'form' ).submit(function( event ) {
@@ -23,7 +23,6 @@ $( 'form' ).submit(function( event ) {
 
     }
   })
-  console.log('hi')
 })
 
 function loadSecrets (){
@@ -35,10 +34,18 @@ function loadSecrets (){
       var $div = $('#secrets');
       $div.html('');
       _(secrets).each(function (secret){
-        $div.append('<li>' + secret.title + '</li>');
+        var str = ''
+        str += '<li>' + secret.title;
+        _(secret.tags).each(function(tag){
+          str += ' #' + tag.body;
+        });
+        str += '</li>';
+        console.log(str);
+        $div.append(str);
       });
       $('#secretText').val('');
     }
   })
 }
 </script>
+

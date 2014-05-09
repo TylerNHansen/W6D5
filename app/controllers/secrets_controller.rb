@@ -6,6 +6,8 @@ class SecretsController < ApplicationController
   def create
     @secret = Secret.new(secret_params)
     @secret.author = current_user
+    @secret.tags = Tag.where(tag_params)
+
 
     if @secret.save
       redirect_to user_url(@secret.recipient_id)
@@ -17,5 +19,13 @@ class SecretsController < ApplicationController
 
   def secret_params
     params.require(:secret).permit(:recipient_id, :title)
+  end
+
+ # Parameters: "tags"=>{"body"=>["#yolo", "superYOLO"]}}
+
+
+
+  def tag_params
+    params.require(:tags).permit(body: [])
   end
 end

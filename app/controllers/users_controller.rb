@@ -30,10 +30,11 @@ class UsersController < ApplicationController
       return
     end
     @user = User.find(params[:id])
-
+    @tags = Tag.all
     respond_to do |format|
       format.html { render :show }
-      format.json {render json: @user.received_secrets}
+      format.json {render json: @user.received_secrets.to_json(include: :tags)
+}
     end
 
 
