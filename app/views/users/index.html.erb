@@ -1,18 +1,77 @@
 <h1>User Index </h1>
 
   <% @users.each do |user|%>
+    <div class="users" id="<%=user.id%>">
+      <br><%= user%>
+      <%if Friendship.can_friend?(user.id, current_user.id)%>
+        <button class='friend' data-id="<%= user.id%>">Friend me!</button>
+      <%end%>
 
-    <br><%= user%>
-    <%if Friendship.can_friend?(user.id, current_user.id)%>
-      <form action="<%= friendship_url %>" method="post" accept-charset="utf-8">
-        <input
-         name="authenticity_token"
-         type="hidden"
-         value="<%= form_authenticity_token %>">
-
-         <input type="hidden" name="friendship[friend_id]" value="<%=user.id%>">
-
-        <input type="submit" id="friend_<%= user.id %>" value="friend!">
-      </form>
-    <%end%>
+      <%if Friendship.exists?(owner_id: current_user.id, friend_id: user.id)%>
+        <button class='destroy_friend' data-id="<%= user.id%>">unfriend! :(</button>
+      <%end%>
+    </div>
   <%end%>
+
+  <script>
+  function setup (){
+    $('.friend').off();
+    $('.destroy_friend').off();
+    $('.friend').on('click', function(event) {
+      console.log('clicked add');
+
+      event.preventDefault();
+
+      var button = $(this);
+      var friend_id = $(this).attr('data-id');
+      var data = 'friendship[owner_id]=<%= current_user.id %>&friendship[friend_id]='+friend_id
+
+
+      $.ajax({
+       url: '<%= friendship_url %>',
+       dataType: 'text',
+       type: 'POST',
+       data: data,
+       success: function(){
+         var userId = button.attr('data-id');
+         var $div = $('#' + userId);
+         $div.append('<button class="destroy_friend" data-id="' + userId + '">unfriend! :(</button>');
+         button.remove();
+         setup();
+       }
+      });
+      button.prop('disabled', true);
+      button.html('friending...')
+    });
+
+
+    $('.destroy_friend').on('click', function(event){
+      console.log('clicked destroy');
+
+      event.preventDefault();
+
+      var button = $(this);
+      var friend_id = $(this).attr('data-id');
+      var data = 'friendship[owner_id]=<%= current_user.id %>&friendship[friend_id]='+friend_id
+
+
+      $.ajax({
+       url: '<%= friendship_url %>',
+       dataType: 'text',
+       type: 'DELETE',
+       data: data,
+       success: function(){
+         var userId = button.attr('data-id');
+         var $div = $('#' + userId);
+         $div.append("<button class='friend' data-id='" + userId + "'>Friend me!</button>");
+         button.remove();
+         setup();
+       }
+      });
+      button.prop('disabled', true);
+      button.html('unfriending...')
+    });
+  }
+  setup()
+  </script>
+
