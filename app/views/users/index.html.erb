@@ -1,0 +1,18 @@
+<h1>User Index </h1>
+
+  <% @users.each do |user|%>
+
+    <br><%= user%>
+    <%if Friendship.can_friend?(user.id, current_user.id)%>
+      <form action="<%= friendship_url %>" method="post" accept-charset="utf-8">
+        <input
+         name="authenticity_token"
+         type="hidden"
+         value="<%= form_authenticity_token %>">
+
+         <input type="hidden" name="friendship[friend_id]" value="<%=user.id%>">
+
+        <input type="submit" id="friend_<%= user.id %>" value="friend!">
+      </form>
+    <%end%>
+  <%end%>
